@@ -1,9 +1,9 @@
 {{/*
 Renders a value that contains template.
 Usage:
-{{ include "tplvalues.render" ( dict "value" .Values.path.to.the.Value "context" $) }}
+{{ include "dokuwiki.tplvalues.render" ( dict "value" .Values.path.to.the.Value "context" $) }}
 */}}
-{{- define "tplvalues.render" -}}
+{{- define "dokuwiki.tplvalues.render" -}}
     {{- if typeIs "string" .value }}
         {{- tpl .value .context }}
     {{- else }}
@@ -27,4 +27,24 @@ If release name contains chart name it will be used as a full name.
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Common labels
+*/}}
+{{- define "dokuwiki.labels" -}}
+helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{ include "dokuwiki.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Selector labels
+*/}}
+{{- define "dokuwiki.selectorLabels" -}}
+app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}

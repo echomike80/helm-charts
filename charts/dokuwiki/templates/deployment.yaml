@@ -25,7 +25,7 @@ spec:
     spec:
       {{- if .Values.hostAliases }}
       # yamllint disable rule:indentation
-      hostAliases: {{- include "tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}
+      hostAliases: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}
       # yamllint enable rule:indentation
       {{- end }}
       {{- if .Values.podSecurityContext.enabled }}
@@ -39,16 +39,16 @@ spec:
       schedulerName: {{ .Values.schedulerName | quote }}
       {{- end }}
       {{- if .Values.topologySpreadConstraints }}
-      topologySpreadConstraints: {{- include "tplvalues.render" (dict "value" .Values.topologySpreadConstraints "context" $) | nindent 8 }}
+      topologySpreadConstraints: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.topologySpreadConstraints "context" $) | nindent 8 }}
       {{- end }}
       {{- if .Values.affinity }}
-      affinity: {{- include "tplvalues.render" (dict "value" .Values.affinity "context" $) | nindent 8 }}
+      affinity: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.affinity "context" $) | nindent 8 }}
       {{- end }}
       {{- if .Values.nodeSelector }}
-      nodeSelector: {{- include "tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      nodeSelector: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
       {{- end }}
       {{- if .Values.tolerations }}
-      tolerations: {{- include "tplvalues.render" (dict "value" .Values.tolerations "context" $) | nindent 8 }}
+      tolerations: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.tolerations "context" $) | nindent 8 }}
       {{- end }}
       initContainers:
         {{- if and .Values.volumePermissions.enabled .Values.persistence.enabled }}
@@ -80,7 +80,7 @@ spec:
           {{- end }}
           command:
           {{- if .Values.certificates.command }}
-          command: {{- include "tplvalues.render" (dict "value" .Values.certificates.command "context" $) | nindent 12 }}
+          command: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.certificates.command "context" $) | nindent 12 }}
           {{- else if .Values.certificates.customCertificate.certificateSecret }}
           - sh
           - -c
@@ -95,17 +95,17 @@ spec:
               -keyout /etc/ssl/private/ssl-cert-snakeoil.key -extensions v3_req
           {{- end }}
           {{- if .Values.certificates.args }}
-          args: {{- include "tplvalues.render" (dict "value" .Values.certificates.args "context" $) | nindent 12 }}
+          args: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.certificates.args "context" $) | nindent 12 }}
           {{- end }}
-          env: {{- include "tplvalues.render" (dict "value" .Values.certificates.extraEnvVars "context" $) | nindent 12 }}
+          env: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.certificates.extraEnvVars "context" $) | nindent 12 }}
           envFrom:
             {{- if .Values.certificates.extraEnvVarsCM }}
             - configMapRef:
-                name: {{ include "tplvalues.render" (dict "value" .Values.certificates.extraEnvVarsCM "context" $) }}
+                name: {{ include "dokuwiki.tplvalues.render" (dict "value" .Values.certificates.extraEnvVarsCM "context" $) }}
             {{- end }}
             {{- if .Values.certificates.extraEnvVarsSecret }}
             - secretRef:
-                name: {{ include "tplvalues.render" (dict "value" .Values.certificates.extraEnvVarsSecret "context" $) }}
+                name: {{ include "dokuwiki.tplvalues.render" (dict "value" .Values.certificates.extraEnvVarsSecret "context" $) }}
             {{- end }}
           volumeMounts:
             - name: etc-ssl-certs
@@ -119,7 +119,7 @@ spec:
               readOnly: true
         {{- end }}
         {{- if .Values.initContainers }}
-        {{- include "tplvalues.render" (dict "value" .Values.initContainers "context" $) | nindent 8 }}
+        {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.initContainers "context" $) | nindent 8 }}
         {{- end }}
       containers:
         - name: dokuwiki
@@ -152,16 +152,16 @@ spec:
             - name: APACHE_HTTPS_PORT_NUMBER
               value: {{ .Values.containerPorts.https | quote }}
               {{- if .Values.extraEnvVars }}
-              {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
+              {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
               {{- end }}
           envFrom:
             {{- if .Values.extraEnvVarsCM }}
             - configMapRef:
-                name: {{ include "tplvalues.render" (dict "value" .Values.extraEnvVarsCM "context" $) }}
+                name: {{ include "dokuwiki.tplvalues.render" (dict "value" .Values.extraEnvVarsCM "context" $) }}
             {{- end }}
             {{- if .Values.extraEnvVarsSecret }}
             - secretRef:
-                name: {{ include "tplvalues.render" (dict "value" .Values.extraEnvVarsSecret "context" $) }}
+                name: {{ include "dokuwiki.tplvalues.render" (dict "value" .Values.extraEnvVarsSecret "context" $) }}
             {{- end }}
           ports:
             - name: http
@@ -179,7 +179,7 @@ spec:
             successThreshold: {{ .Values.livenessProbe.successThreshold }}
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
           {{- else if .Values.customLivenessProbe }}
-          livenessProbe: {{- include "tplvalues.render" (dict "value" .Values.customLivenessProbe "context" $) | nindent 12 }}
+          livenessProbe: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.customLivenessProbe "context" $) | nindent 12 }}
           {{- end }}
           {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
@@ -192,7 +192,7 @@ spec:
             successThreshold: {{ .Values.readinessProbe.successThreshold }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           {{- else if .Values.customReadinessProbe }}
-          readinessProbe: {{- include "tplvalues.render" (dict "value" .Values.customReadinessProbe "context" $) | nindent 12 }}
+          readinessProbe: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.customReadinessProbe "context" $) | nindent 12 }}
           {{- end }}
           {{- if .Values.startupProbe.enabled }}
           startupProbe:
@@ -205,11 +205,11 @@ spec:
             successThreshold: {{ .Values.startupProbe.successThreshold }}
             failureThreshold: {{ .Values.startupProbe.failureThreshold }}
           {{- else if .Values.customStartupProbe }}
-          startupProbe: {{- include "tplvalues.render" (dict "value" .Values.customStartupProbe "context" $) | nindent 12 }}
+          startupProbe: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.customStartupProbe "context" $) | nindent 12 }}
           {{- end }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- if .Values.lifecycleHooks }}
-          lifecycle: {{- include "tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
+          lifecycle: {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
           {{- end }}
           volumeMounts:
             {{- if .Values.certificates.customCAs }}
@@ -244,7 +244,7 @@ spec:
               name: custom-postinit
             {{- end }}
             {{- if .Values.extraVolumeMounts }}
-            {{- include "tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
             {{- end }}
             - name: dokuwiki-data
               mountPath: /bitnami/dokuwiki
@@ -271,7 +271,7 @@ spec:
           resources: {{- toYaml .Values.metrics.resources | nindent 12 }}
         {{- end }}
         {{- if .Values.sidecars }}
-        {{- include "tplvalues.render" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
+        {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
         {{- end }}
       volumes:
         {{- if .Values.certificates.customCAs }}
@@ -314,5 +314,5 @@ spec:
             defaultMode: 0755
         {{- end }}
         {{- if .Values.extraVolumes }}
-        {{- include "tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+        {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
         {{- end }}
