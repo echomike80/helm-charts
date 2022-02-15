@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{- .Values.fullname | trunc 63 | trimSuffix "-" -}}
+  labels:
+    app.kubernetes.io/name: {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+    helm.sh/chart: {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- if (or (eq .Values.service.type "LoadBalancer") (eq .Values.service.type "NodePort")) }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy | quote }}
+  {{- end }}
+  ports:
+    - name: http
+      port: {{ .Values.service.ports.http }}
+      targetPort: http
+      {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePorts.http))) }}
+      nodePort: {{ .Values.service.nodePorts.http }}
+      {{- end }}
+    - name: https
+      port: {{ .Values.service.ports.https }}
+      targetPort: https
+      {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePorts.https))) }}
+      nodePort: {{ .Values.service.nodePorts.https }}
+      {{- end }}
+  selector:
+    app.kubernetes.io/name: {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+    app.kubernetes.io/instance: {{ .Release.Name }}

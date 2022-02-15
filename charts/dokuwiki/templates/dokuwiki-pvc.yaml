@@ -1,0 +1,24 @@
+{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim ) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{- .Values.fullname | trunc 63 | trimSuffix "-" -}}
+  labels:
+    app.kubernetes.io/name: {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+    helm.sh/chart: {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  accessModes:
+  {{- if not (empty .Values.persistence.accessModes) }}
+  {{- range .Values.persistence.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- else }}
+    - {{ .Values.persistence.accessMode | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size | quote }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+{{- end -}}
