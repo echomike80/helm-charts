@@ -3,8 +3,8 @@ kind: Deployment
 metadata:
   name: {{- .Values.fullname | trunc 63 | trimSuffix "-" -}}
   labels:
-    app.kubernetes.io/name: {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-    helm.sh/chart: {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+    app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+    helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
@@ -13,13 +13,13 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-    app.kubernetes.io/name: {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+    app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-        helm.sh/chart: {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+        app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+        helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
@@ -303,7 +303,7 @@ spec:
         - name: dokuwiki-data
         {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ default (include ".Values.fullname" .) .Values.persistence.existingClaim }}
+            claimName: {{ default .Values.fullname .Values.persistence.existingClaim }}
         {{- else }}
           emptyDir: {}
         {{- end }}
