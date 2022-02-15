@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{- .Values.fullname | trunc 63 | trimSuffix "-" -}}
+  name: {{ template "common.names.fullname" . }}
   labels:
     app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
     helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
@@ -13,8 +13,8 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-    app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
@@ -141,7 +141,7 @@ spec:
             - name: DOKUWIKI_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{- .Values.fullname | trunc 63 | trimSuffix "-" -}}
+                  name: {{ template "common.names.fullname" . }}
                   key: dokuwiki-password
             - name: DOKUWIKI_EMAIL
               value: {{ .Values.dokuwikiEmail | quote }}
@@ -303,14 +303,14 @@ spec:
         - name: dokuwiki-data
         {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ default .Values.fullname .Values.persistence.existingClaim }}
+            claimName: {{ default (include "common.names.fullname" .) .Values.persistence.existingClaim }}
         {{- else }}
           emptyDir: {}
         {{- end }}
         {{- if .Values.customPostInitScripts }}
         - name: custom-postinit
           configMap:
-            name: {{ printf "%s-postinit" (include ".Values.fullname" .) }}
+            name: {{ printf "%s-postinit" (include "common.names.fullname" .) }}
             defaultMode: 0755
         {{- end }}
         {{- if .Values.extraVolumes }}
