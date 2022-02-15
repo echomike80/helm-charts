@@ -2,7 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "common.names.fullname" . }}
+  name: {{ template "dokuwiki.names.fullname" . }}
   labels:
     {{- include "dokuwiki.labels" . | nindent 4 }}
 spec:
