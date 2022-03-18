@@ -14,6 +14,10 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+## @param existingSecret Use an existing secret with the mariadb root password
+## 
+existingSecret: ""
+
 persistence:
   enabled: true
   ## MariaDB data Persistent Volume Storage Class
