@@ -19,6 +19,7 @@ externalDatabase:
   name: owncloud
   user: owncloud
   password: owncloud
+  existingSecret: ""
 
 persistence:
   enabled: true
