@@ -14,6 +14,26 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+## @param existingSecret Use an existing secret with the mariadb root password
+## 
+existingSecret: ""
+
+persistence:
+  enabled: true
+  ## MariaDB data Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default prfullnameovisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 8Gi
+  existingClaim: ""
+  annotations: {}
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -38,7 +58,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 3306
 
 ingress:
   enabled: false
