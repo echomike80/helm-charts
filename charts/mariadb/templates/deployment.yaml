@@ -42,7 +42,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "mariadb.fullname" . }}
-                  key: mariadb-password
+                  key: rootpass
 ## ToDo!
 #          livenessProbe:
 #            httpGet:
