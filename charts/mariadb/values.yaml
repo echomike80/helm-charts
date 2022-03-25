@@ -14,8 +14,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-## @param existingSecret Use an existing secret with the mariadb root password
-## 
+## Use an existing secret for the mariadb root password
 existingSecret: ""
 
 persistence:
