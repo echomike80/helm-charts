@@ -39,7 +39,15 @@ spec:
           - name: OWNCLOUD_ADMIN_USERNAME
             value: {{ .Values.owncloud.username | quote }}
           - name: OWNCLOUD_ADMIN_PASSWORD
+          {{- if .Values.externalDatabase.existingSecret }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "owncloud.fullname" . }}
+                key: admin-password
+          {{- end }}
+          {{- if not .Values.externalDatabase.existingSecret }}
             value: {{ .Values.owncloud.password | quote }}
+          {{- end }}
           {{- if .Values.mariadb.enabled }}
           - name: MARIADB_HOST
             value: {{ template "owncloud.mariadb.fullname" . }}
@@ -81,26 +89,27 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /status.php
-              port: http
-              httpHeaders:
-              - name: Host
-                value: {{ .Values.owncloud.domain | quote }}
-            initialDelaySeconds: 120
-            timeoutSeconds: 5
-            failureThreshold: 6
-          readinessProbe:
-            httpGet:
-              path: /status.php
-              port: http
-              httpHeaders:
-              - name: Host
-                value: {{ .Values.owncloud.domain | quote }}
-            initialDelaySeconds: 30
-            timeoutSeconds: 3
-            periodSeconds: 5
+## ToDo!
+#           livenessProbe:
+#             httpGet:
+#               path: /status.php
+#               port: http
+#               httpHeaders:
+#               - name: Host
+#                 value: {{ .Values.owncloud.domain | quote }}
+#             initialDelaySeconds: 120
+#             timeoutSeconds: 5
+#             failureThreshold: 6
+#          readinessProbe:
+#             httpGet:
+#               path: /status.php
+#               port: http
+#               httpHeaders:
+#               - name: Host
+#                 value: {{ .Values.owncloud.domain | quote }}
+#             initialDelaySeconds: 30
+#             timeoutSeconds: 3
+#             periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

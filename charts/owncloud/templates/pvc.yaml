@@ -37,5 +37,5 @@ spec:
   storageClassName: {{ .Values.persistence.storageClass }}
   selector: 
     matchLabels:
-      {{- include "mariadb.selectorLabels" . | nindent 6 }}
+      {{- include "owncloud.selectorLabels" . | nindent 6 }}
 {{- end -}}

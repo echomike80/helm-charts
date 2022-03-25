@@ -8,10 +8,12 @@ owncloud:
   domain: owncloud.chart.example
   username: owncloud
   password: owncloud
+  existingSecret: ""
 
 mariadb:
   enabled: false
 
+## see https://doc.owncloud.com/server/next/admin_manual/installation/docker/
 externalDatabase:
   type: ""
   host: ""
