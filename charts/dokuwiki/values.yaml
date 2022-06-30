@@ -456,6 +456,9 @@ ingress:
     entryPointName:
       http: web
       https: websecure
+    tls:
+      enabled: false
+      certResolver: stageresolver
 
 ## @section Volume Permissions parameters
 ##

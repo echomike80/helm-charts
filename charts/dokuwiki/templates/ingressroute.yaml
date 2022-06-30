@@ -36,4 +36,8 @@ spec:
       {{- else }}
       port: {{ .Values.service.ports.http }}
       {{- end }}
+  {{- if .Values.ingress.traefik.tls.enabled }}
+  tls:
+    certResolver: {{ .Values.ingress.traefik.tls.certResolver }}
+  {{- end }}
 {{- end }}
