@@ -18,8 +18,4 @@ spec:
     services:
     - name: {{ include "owncloud.fullname" . }}
       port: {{ .Values.service.port }}
-  {{- if .Values.ingress.tls }}
-  tls:
-    stores: default
-  {{- end }}
 {{- end }}

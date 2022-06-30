@@ -36,8 +36,4 @@ spec:
       {{- else }}
       port: {{ .Values.service.ports.http }}
       {{- end }}
-  {{- if .Values.ingress.tls }}
-  tls:
-    stores: default
-  {{- end }}
 {{- end }}
