@@ -1,0 +1,43 @@
+{{- if and (.Values.ingress.enabled) (eq true .Values.ingress.traefik.enabled) }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ template "dokuwiki.names.fullname" . }}
+  labels: 
+    {{- include "dokuwiki.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
+    {{- if .Values.ingress.annotations }}
+    {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.commonAnnotations }}
+    {{- include "dokuwiki.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+spec:
+  entryPoints:
+  {{- if .Values.ingress.tls }}
+    - {{ .Values.traefik.entryPointName.https }}
+  {{- else }}
+    - {{ .Values.traefik.entryPointName.http }}
+  {{- end }}
+  routes:
+  {{- if .Values.ingress.hostname }}
+  - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
+  {{- else }}
+  - match: PathPrefix(`{{ .Values.ingress.path }}`)
+  {{- end }}
+    kind: Rule
+    services:
+    - name: {{ template "dokuwiki.names.fullname" . }}
+      {{- if .Values.ingress.tls }}
+      port: {{ .Values.service.ports.https }}
+      {{- else }}
+      port: {{ .Values.service.ports.http }}
+      {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    stores: default
+  {{- end }}
+{{- end }}

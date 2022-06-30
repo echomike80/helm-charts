@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled }}
+{{- if and (.Values.ingress.enabled) (eq false .Values.ingress.traefik.enabled) }}
 apiVersion: {{ template "dokuwiki.capabilities.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
