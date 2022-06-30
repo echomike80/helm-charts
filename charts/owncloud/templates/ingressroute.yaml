@@ -1,0 +1,35 @@
+{{- if and (.Values.ingress.enabled) (eq true .Values.ingress.traefik.enabled) }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ template "owncloud.names.fullname" . }}
+  labels: 
+    {{- include "owncloud.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
+    {{- if .Values.ingress.annotations }}
+    {{- include "owncloud.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.commonAnnotations }}
+    {{- include "owncloud.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+spec:
+  entryPoints:
+    - {{ .Values.ingress.traefik.entryPointName.http }}
+  routes:
+  {{- if .Values.ingress.hostname }}
+  - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
+  {{- else }}
+  - match: PathPrefix(`{{ .Values.ingress.path }}`)
+  {{- end }}
+    kind: Rule
+    services:
+    - name: {{ template "owncloud.names.fullname" . }}
+      port: {{ .Values.service.port }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    stores: default
+  {{- end }}
+{{- end }}

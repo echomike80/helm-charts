@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled -}}
+{{- if and (.Values.ingress.enabled) (eq false .Values.ingress.traefik.enabled) }}
 {{- $fullName := include "owncloud.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}

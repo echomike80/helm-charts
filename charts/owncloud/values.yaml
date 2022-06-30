@@ -88,14 +88,24 @@ ingress:
   annotations:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  ## @param ingress.hostname for Ingressroute when ingress.traefik.enabled is true
+  ##
+  hostname: owncloud.local
   hosts:
     - host: "owncloud.chart.example"
       paths: ["/*"]
       servicePort: 80
+  path: /
   tls:
     - hosts:
       - "owncloud.chart.example"
       secretName: owncloud
+  ## @param ingress.traefik Use traefik to enable IngressRoute
+  ##
+  traefik:
+    enabled: false
+    entryPointName:
+      http: web
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
