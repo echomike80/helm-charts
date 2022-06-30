@@ -18,9 +18,9 @@ metadata:
 spec:
   entryPoints:
   {{- if .Values.ingress.tls }}
-    - {{ .Values.traefik.entryPointName.https }}
+    - {{ .Values.ingress.traefik.entryPointName.https }}
   {{- else }}
-    - {{ .Values.traefik.entryPointName.http }}
+    - {{ .Values.ingress.traefik.entryPointName.http }}
   {{- end }}
   routes:
   {{- if .Values.ingress.hostname }}
