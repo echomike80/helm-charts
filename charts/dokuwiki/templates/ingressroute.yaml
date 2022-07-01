@@ -27,7 +27,7 @@ spec:
     kind: Rule
     {{- if .Values.ingress.traefik.tls.enabled }}
     middlewares:
-      - name: redirect-to-https
+      - name: {{ template "dokuwiki.names.fullname" . }}-redirect-to-https
     {{- end }}
     services:
     - name: {{ template "dokuwiki.names.fullname" . }}
