@@ -2,7 +2,7 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: {{ template "dokuwiki.names.fullname" . }}
+  name: {{ template "dokuwiki.names.fullname" . }}-http
   labels: 
     {{- include "dokuwiki.labels" . | nindent 4 }}
   annotations:
@@ -18,9 +18,41 @@ metadata:
 spec:
   entryPoints:
     - {{ .Values.ingress.traefik.entryPointName.http }}
-  {{- if .Values.ingress.traefik.tls.enabled }}
-    - {{ .Values.ingress.traefik.entryPointName.https }}
+  routes:
+  {{- if .Values.ingress.hostname }}
+  - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
+  {{- else }}
+  - match: PathPrefix(`{{ .Values.ingress.path }}`)
   {{- end }}
+    kind: Rule
+    {{- if .Values.ingress.traefik.tls.enabled }}
+    middlewares:
+      - name: redirect-to-https
+    {{- end }}
+    services:
+    - name: {{ template "dokuwiki.names.fullname" . }}
+      port: {{ .Values.service.ports.http }}
+{{- if .Values.ingress.traefik.tls.enabled }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ template "dokuwiki.names.fullname" . }}-https
+  labels: 
+    {{- include "dokuwiki.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
+    {{- if .Values.ingress.annotations }}
+    {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.commonAnnotations }}
+    {{- include "dokuwiki.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+spec:
+  entryPoints:
+    - {{ .Values.ingress.traefik.entryPointName.https }}
   routes:
   {{- if .Values.ingress.hostname }}
   - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
@@ -31,8 +63,28 @@ spec:
     services:
     - name: {{ template "dokuwiki.names.fullname" . }}
       port: {{ .Values.service.ports.http }}
-  {{- if .Values.ingress.traefik.tls.enabled }}
   tls:
     certResolver: {{ .Values.ingress.traefik.tls.certResolver }}
-  {{- end }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ template "dokuwiki.names.fullname" . }}-redirect-to-https
+  labels: 
+    {{- include "dokuwiki.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
+    {{- if .Values.ingress.annotations }}
+    {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.commonAnnotations }}
+    {{- include "dokuwiki.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+{{- end }}
 {{- end }}
