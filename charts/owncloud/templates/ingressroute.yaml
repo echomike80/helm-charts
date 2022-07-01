@@ -2,15 +2,37 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: {{ include "owncloud.fullname" . }}
+  name: {{ include "owncloud.fullname" . }}-http
   labels:
     {{- include "owncloud.labels" . | nindent 4 }}
 spec:
   entryPoints:
     - {{ .Values.ingress.traefik.entryPointName.http }}
-  {{- if .Values.ingress.traefik.tls.enabled }}
-    - {{ .Values.ingress.traefik.entryPointName.https }}
+  routes:
+  {{- if .Values.ingress.hostname }}
+  - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
+  {{- else }}
+  - match: PathPrefix(`{{ .Values.ingress.path }}`)
   {{- end }}
+    kind: Rule
+    {{- if .Values.ingress.traefik.tls.enabled }}
+    middlewares:
+      - name: {{ template "owncloud.fullname" . }}-redirect-to-https
+    {{- end }}
+    services:
+    - name: {{ include "owncloud.fullname" . }}
+      port: {{ .Values.service.port }}
+{{- if .Values.ingress.traefik.tls.enabled }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "owncloud.fullname" . }}-https
+  labels:
+    {{- include "owncloud.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - {{ .Values.ingress.traefik.entryPointName.https }}
   routes:
   {{- if .Values.ingress.hostname }}
   - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
@@ -21,8 +43,16 @@ spec:
     services:
     - name: {{ include "owncloud.fullname" . }}
       port: {{ .Values.service.port }}
-  {{- if .Values.ingress.traefik.tls.enabled }}
-  tls:
-    certResolver: {{ .Values.ingress.traefik.tls.certResolver }}
-  {{- end }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "owncloud.fullname" . }}-redirect-to-https
+  labels: 
+    {{- include "owncloud.labels" . | nindent 4 }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+{{- end }}
 {{- end }}
