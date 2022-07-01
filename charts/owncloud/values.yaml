@@ -106,6 +106,10 @@ ingress:
     enabled: false
     entryPointName:
       http: web
+      https: websecure
+    tls:
+      enabled: false
+      certResolver: myresolver
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -458,7 +458,7 @@ ingress:
       https: websecure
     tls:
       enabled: false
-      certResolver: stageresolver
+      certResolver: myresolver
 
 ## @section Volume Permissions parameters
 ##
