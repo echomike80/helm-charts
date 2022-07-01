@@ -43,6 +43,8 @@ spec:
     services:
     - name: {{ include "owncloud.fullname" . }}
       port: {{ .Values.service.port }}
+  tls:
+    certResolver: {{ .Values.ingress.traefik.tls.certResolver }}
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
