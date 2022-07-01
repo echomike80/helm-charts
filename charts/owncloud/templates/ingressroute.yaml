@@ -8,6 +8,9 @@ metadata:
 spec:
   entryPoints:
     - {{ .Values.ingress.traefik.entryPointName.http }}
+  {{- if .Values.ingress.traefik.tls.enabled }}
+    - {{ .Values.ingress.traefik.entryPointName.https }}
+  {{- end }}
   routes:
   {{- if .Values.ingress.hostname }}
   - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
@@ -18,4 +21,8 @@ spec:
     services:
     - name: {{ include "owncloud.fullname" . }}
       port: {{ .Values.service.port }}
+  {{- if .Values.ingress.traefik.tls.enabled }}
+  tls:
+    certResolver: {{ .Values.ingress.traefik.tls.certResolver }}
+  {{- end }}
 {{- end }}

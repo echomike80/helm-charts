@@ -17,10 +17,9 @@ metadata:
     {{- end }}
 spec:
   entryPoints:
-  {{- if .Values.ingress.tls }}
-    - {{ .Values.ingress.traefik.entryPointName.https }}
-  {{- else }}
     - {{ .Values.ingress.traefik.entryPointName.http }}
+  {{- if .Values.ingress.traefik.tls.enabled }}
+    - {{ .Values.ingress.traefik.entryPointName.https }}
   {{- end }}
   routes:
   {{- if .Values.ingress.hostname }}
@@ -31,11 +30,7 @@ spec:
     kind: Rule
     services:
     - name: {{ template "dokuwiki.names.fullname" . }}
-      {{- if .Values.ingress.tls }}
-      port: {{ .Values.service.ports.https }}
-      {{- else }}
       port: {{ .Values.service.ports.http }}
-      {{- end }}
   {{- if .Values.ingress.traefik.tls.enabled }}
   tls:
     certResolver: {{ .Values.ingress.traefik.tls.certResolver }}
