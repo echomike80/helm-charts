@@ -5,16 +5,6 @@ metadata:
   name: {{ template "dokuwiki.names.fullname" . }}-http
   labels: 
     {{- include "dokuwiki.labels" . | nindent 4 }}
-  annotations:
-    {{- if .Values.ingress.certManager }}
-    kubernetes.io/tls-acme: "true"
-    {{- end }}
-    {{- if .Values.ingress.annotations }}
-    {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.commonAnnotations }}
-    {{- include "dokuwiki.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
 spec:
   entryPoints:
     - {{ .Values.ingress.traefik.entryPointName.http }}
@@ -40,16 +30,6 @@ metadata:
   name: {{ template "dokuwiki.names.fullname" . }}-https
   labels: 
     {{- include "dokuwiki.labels" . | nindent 4 }}
-  annotations:
-    {{- if .Values.ingress.certManager }}
-    kubernetes.io/tls-acme: "true"
-    {{- end }}
-    {{- if .Values.ingress.annotations }}
-    {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.commonAnnotations }}
-    {{- include "dokuwiki.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
 spec:
   entryPoints:
     - {{ .Values.ingress.traefik.entryPointName.https }}
@@ -72,16 +52,6 @@ metadata:
   name: {{ template "dokuwiki.names.fullname" . }}-redirect-to-https
   labels: 
     {{- include "dokuwiki.labels" . | nindent 4 }}
-  annotations:
-    {{- if .Values.ingress.certManager }}
-    kubernetes.io/tls-acme: "true"
-    {{- end }}
-    {{- if .Values.ingress.annotations }}
-    {{- include "dokuwiki.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.commonAnnotations }}
-    {{- include "dokuwiki.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
 spec:
   redirectScheme:
     scheme: https
